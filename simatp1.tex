@@ -1,9 +1,7 @@
 \documentclass{webofc}
 \usepackage[varg]{txfonts}   % Web of Conferences font
-\usepackage{lineno}
 %
 \begin{document}
-\linenumbers
 %
 \title{ATLAS Sim@P1 upgrades during long shutdown two}
 %
@@ -46,23 +44,22 @@
   data taking. When ATLAS is not recording data, this large compute resource is
   used to generate and process simulation data for the experiment. At the
   beginning of the second long shutdown of the large hadron collider, the HLT
-  farm including the
-  Sim@P1 infrastructure was upgraded. Previous papers emphasised the need for
-  “simple, reliable, and efficient tools” and assessed various options to
-  quickly switch between data acquisition operation and offline processing. In
-  this contribution, we describe the new mechanisms put in place for the
-  opportunistic exploitation of the HLT farm for offline processing and give
-  the results from the first months of operation.
+  farm including the   Sim@P1 infrastructure was upgraded. Previous papers
+  emphasised the need for “simple, reliable, and efficient tools” and assessed
+  various options to quickly switch between data acquisition operation and
+  offline processing. In this contribution, we describe the new mechanisms put
+  in place for the opportunistic exploitation of the HLT farm for offline
+  processing and give the results from the first months of operation.
 }
 %
 \maketitle
 %
 \section{Introduction}
 \label{intro}
-ATLAS~\cite{atlas} is a general purpose experiment located at point one (P1) of
-CERN's large hadron collider (LHC). ATLAS employs a large computer farm, summarised in
-table~\ref{tab:hlt_hardware}, to facilitate data acquisition and event
-selection.
+ATLAS is a general purpose experiment located at point one (P1) of CERN's large
+hadron collider (LHC)~\cite{atlas}. ATLAS employs a large computer farm,
+summarised in table~\ref{tab:hlt_hardware}, to facilitate data acquisition and
+event selection.
 \begin{table}
 \centering
 \caption{The hardware at P1 currently available for use with Sim@P1. The C6100
@@ -86,83 +83,77 @@ MegWare & E5-2680 v3 & 48 & 64 & 48 & 680 \\
 QuantaPlex & E5-2680 v3 & 48 & 64 & 48 & 472\\\hline
 \end{tabular}
 \end{table}
-The HLT~\cite{tdaq2013} is a mission critical part of the ATLAS experiment
-and is physically connected to the control network of the detector and the
-``data'' network which allows connections to the CERN data centre through a
-switch at P1. The Sim@P1 project aims to opportunistically use the trigger and
-data acquisition high level trigger resources for offline computing.
- When working with Sim@P1 it is important to ensure the secure
-isolation from the physical resources at P1, seamless integration into the ATLAS
-distributed computing system, and reliable transition between the functions of
-the resources. Throughout this text we will refer to standard operation of the
-HLT as \textit{online mode} and the operation as part of the ATLAS distributed
+The HLT is a mission critical part of the ATLAS experiment and is physically
+connected to the control network of the detector and the ``data'' network which
+allows connections to the CERN data centre through a switch at
+P1~\cite{tdaq2013}. The Sim@P1 project aims to opportunistically use the trigger
+and data acquisition high level trigger resources for offline computing. When
+working with Sim@P1 it is important to ensure the secure isolation from the
+physical resources at P1, seamless integration into the ATLAS distributed
+computing system, and reliable transition between the functions of the
+resources. Throughout this text we will refer to standard operation of the HLT
+as \textit{online mode} and the operation as part of the ATLAS distributed
 computing system as \textit{offline mode}.
 
 A system satisfying these criteria was developed during the first long shutdown
 of the LHC~\cite{Ballestrero:2015ypa}. Isolation is achieved by running virtual
 machines on the physical HLT hardware. The virtual machines were originally
-managed using
-the cloud framework OpenStack~\cite{openstack}. The virtual machines shared the
-``data'' connection of the HLT hardware through a tagged virtual local area
-network (VLAN), which provided network
-isolation on the level of the Ethernet frame managed by the switches. This VLAN
-allowed the Virtual Machines to connect to a controlled list of interfaces in
-the
-CERN general purpose network. This list specifies the interface of the machines
-needed to allow offline workloads to be delivered and executed. To minimise
-impact of Sim@P1 on the Trigger and Data Acquisition (TDAQ) operation, only
-simulation tasks from the central production system are submitted to run at P1.
+managed using the cloud framework OpenStack~\cite{openstack}. The virtual
+machines shared the ``data'' connection of the HLT hardware through a tagged
+virtual local area network (VLAN), which provided network isolation on the level
+of the Ethernet frame managed by the switches. This VLAN allowed the virtual
+machines to connect to a controlled list of interfaces in the CERN general
+purpose network. This list specifies the interface of the machines needed to
+allow offline workloads to be delivered and executed. To minimise impact of
+Sim@P1 on the Trigger and Data Acquisition (TDAQ) operation, only simulation
+tasks from the central production system are submitted to run at P1.
 
 The original implementation of Sim@P1 ran successfully during the first long
 shutdown of the LHC facilities between 2013 and 2015. Once the experiment
-resumed data-taking, the system was used in offline
-mode~\cite{Ballestrero:2017psv}. The HLT was switched from TDAQ function to
-offline mode for intervals of a few days during technical stops and machine
-development. To allow this opportunistic usage a set of scripts were developed
-to manage the transition of resources between online and offline function.
+resumed data-taking, the system was used
+opportunistically~\cite{Ballestrero:2017psv}. The HLT was switched from TDAQ
+function to offline mode for intervals of a few days during technical stops and
+machine development. To allow this opportunistic usage a set of scripts were
+developed to manage the transition of resources between online and offline
+function.
 
-During the second long shutdown of the LHC facilities, starting in 2019,
-the HLT
-was be upgraded. The changes to the HLT necessitated an upgrade of the Sim@P1
-infrastructure\footnote{The OpenStack Icehouse does not support operating on
-CentOS7 running on the TDAQ HLT starting in 2019}. A previous
-publication~\cite{Berghaus:2019wuj} offered multiple options for the upgrade of
-the Sim@P1 infrastructure during the second long shutdown. In this paper, we
-describe how the system was modified for operation with the upgraded HLT
-hardware.
+During the second long shutdown of the LHC facilities, starting in 2019, the HLT
+was upgraded. The changes to the HLT necessitated an upgrade of the Sim@P1
+infrastructure\footnote{The Icehouse release of OpenStack does not support
+CentOS7, which started running on the HLT in 2019.}. A previous
+publication offered multiple options for this upgrade~\cite{Berghaus:2019wuj}.
+In this paper, we describe how the system was modified for operation with the
+upgraded HLT hardware.
 
 \section{The Sim@P1 infrastructure}
 \label{sec:infra}
 During the year end technical stop from December 2017 to March 2018, the
-computing hardware of the HLT was replaced with new nodes. The old HLT hardware
+computing hardware of the HLT was replaced with new nodes. Some old HLT hardware
 was retained at P1 and is permanently operating in offline mode. The new
-hardware has
-been used offline during the various technical and machine development
-stops throughout 2018. The current hardware configuration is summarised in
-table~\ref{tab:hlt_hardware}. Groups of 32 or 40 servers are organised into
-racks in the data centre at P1.
+hardware has been used offline during the various technical and machine
+development stops throughout 2018. The current hardware configuration is
+summarised in table~\ref{tab:hlt_hardware}. Groups of 32 or 40 servers are
+organised into racks in the data centre at P1.
 
 When a rack is not needed for data taking a shifter can set that rack to
 offline operation. This action triggers a change in the configuration database
-used by
-the TDAQ. The next time the configuration management system runs on any server,
-or trigger processing unit (TPU), in that rack\footnote{The configuration
-management tool, Puppet, runs once an
-hour on the TPUs.} it changes the system configuration to reflect the change
-in the configuration database. That means an ephemeral
-disk providing 20~\textrm{GB} per core is created and a virtual machine instance
-is started\footnote{The size of the ephemeral disk is reduced to ensure at least
-20\% of the hard drive is free.}. This document will refer to such a
-running virtual machine as an \textit{instance}.
+used by the TDAQ. The next time the configuration management system runs on any
+server, or trigger processing unit (TPU), in that rack\footnote{The
+configuration management tool, Puppet, runs once an hour on the TPUs.} it
+changes the system configuration to reflect the change in the configuration
+database. An ephemeral disk providing 20~\textrm{GB} per core is
+created and a virtual machine instance is started\footnote{The size of the
+ephemeral disk is reduced to ensure at least 20\% of the hard drive is free.}.
+This document will refer to such a running virtual machine as an
+\textit{instance}.
 
 Instances are contextualised using amiconfig\footnote{Originally a
 project by rPath, Inc. now maintained by the CernVM team.}~\cite{amiconfig}.
 The contextualisation is delivered using an ISO image added to the instance
 by libvirt~\cite{libvirt}. The ISO image is formatted as an OpenNebula data
-source. The
-contextualisation sets up the computing environment for the ATLAS offline
-workloads and sets the virtual machines to advertise themselves to a
-HTCondor~\cite{condor} system running in the CERN general purpose network.
+source. The contextualisation sets up the computing environment for the ATLAS
+offline workloads and sets the virtual machines to advertise themselves to a
+HTCondor system running in the CERN general purpose network~\cite{condor}.
 Instances are configured to use HTCondor's dynamic partitioning feature to
 map workloads to the resources. Process isolation is achieved using the control
 groups feature of the Linux kernel.
@@ -190,14 +181,13 @@ CernVM is a good solution for Sim@P1 because the micro-image can be distributed
 to all the TPUs and require a trivial disk space during HLT operation. Using
 CernVM means that we rely on the CernVM file system (CVMFS) to provide both the
 operating system content as well as the experiment software. In our CHEP2018
-contribution we incorrectly stated that the load on the Frontier
-squids during the switch to offline mode was
-low~\cite{Berghaus:2019wuj, Dykstra:2019}.
-This measurement was flawed in two ways: the instances were incorrectly
-contextualised to retrieve the CVMFS content from the Frontier squids operated
-by CERN IT for their batch system. Furthermore, the Frontier squids at P1 were
-blocked by the Frontier servers, causing Frontier requests to fail over to the
-CERN IT's squids Figure~\ref{fig:single_proxy} shows that, after correcting the
+contribution we incorrectly stated that the load on the Frontier squids during
+the switch to offline mode was low~\cite{Berghaus:2019wuj, Dykstra:2019}.
+This measurement was flawed: the instances were incorrectly contextualised to
+retrieve the CVMFS content from the Frontier squids operated by CERN IT for
+their batch system. Figure~\ref{fig:single_proxy} shows that, after correcting
+the contextualisation, the Frontier squid at P1 was saturating its network
+bandwidth to deliver the content required by the booting instances.
 \begin{figure}[h]
 \centering
 \sidecaption
@@ -212,16 +202,13 @@ the steady increase in the load and processes in the upper plot suggests the
 squid is the rate determining system in the transition of the farm.}
 \label{fig:single_proxy}
 \end{figure}
-contextualisation, the Frontier squid at P1 was saturating its network bandwidth
-to deliver the content required by the booting instances. To address the
-bottleneck posed by the single squid we added a second squid instance,
-then added CVMFS caches that persist throughout HLT operation, and finally
-created
-a hierarchy of squids on the instances in offline mode.
+To address the bottleneck posed by the single squid we added a second squid
+instance, then added CVMFS caches that persist throughout HLT operation, and
+finally created a hierarchy of squids on the instances in offline mode.
 
-The addition of a second squid doubled to total bandwidth used to deliver the
+The addition of a second squid doubled the total bandwidth used to deliver the
 content required for CVMFS. As a result the transition to offline mode finished
-in 3 hours - approximately twice as fast as with the single Frontier squid.
+in three hours: approximately twice as fast as with the single Frontier squid.
 
 
 \subsection{Persistent CVMFS caches}
@@ -241,6 +228,8 @@ mounts the disk as the CVMFS cache. If the second disk exists but carries no
 labelled partition the disk is formatted with the label ``cache'' and mounted.
 
 Figure~\ref{fig:persistent_cache} shows that with a warm CVMFS cache the farm
+boots in an hour, with a slight time delay between the virtual machine being
+created and being fully occupied with work.
 \begin{figure}[h]
 \centering
 \sidecaption
@@ -253,8 +242,6 @@ displayed. With the persistent cache the network traffic on the squids
 is greatly reduced.}
 \label{fig:persistent_cache}
 \end{figure}
-boots in the hour, with a slight time delay between the virtual machine being
-created and being fully occupied with work.
 
 
 \subsection{Squid hierarchy}
@@ -274,48 +261,44 @@ micro-kernel to delay the boot process until at least one proxy cache is up.
 \label{sec:ops}
 The new configuration of Sim@P1 was operational within two days of the upgrade
 to the TDAQ HLT. This quick transition is a testament to the simplification of
-the Sim@P1 infrastructure under the new configuration. A feature of libvirt was
-discovered when
-returning the resources to HLT operation. The following section described the
-workaround that was implemented. The squid hierarchy provided a marginal
-improvement in the transition from online to offline operation while reducing
-the
-overall stability of the system: we started loosing racks when the two squids in
-the rack cease functioning.
+the Sim@P1 infrastructure under the new configuration. A feature of libvirt
+which negativy effects returning the resources to online operation was
+discovered. The following section described the workaround that was implemented.
+The squid hierarchy provided a marginal improvement in the transition from
+online to offline operation while reducing the overall stability of the system:
+we started loosing racks when the two squids in the rack cease functioning.
 
 \subsection{Returning the resources}
 \label{sec:return}
 Returning the resource to online mode quickly and reliably is absolutely
-essential, more so when ATLAS is taking data.
-Should an instance running on a TPU be busy with IO intensive work, it may take
-time O(10~\textrm{s}) for libvirt to destroy the instance\footnote{Usually an
-active application using swap space.}. Libvirt has a timeout of
-15~\textrm{s} waiting
-on the destruction of a virtual machine, taking longer produces an error in
-returning that TPU to online mode. A helper script to manage the instance state
-was written. It attempts to destroy the instance three
-times, with a 15~\textrm{s} delay between attempts. With this modification, all
-resources were successfully returned to online mode without issues.
+essential, more so when ATLAS is taking data. Should an instance running on a
+TPU be busy with IO intensive work, it may take time O(10~\textrm{s}) for
+libvirt to destroy the instance\footnote{Usually an active application using
+swap space.}. Libvirt has a timeout of 15~\textrm{s} waiting on the destruction
+of a virtual machine, taking longer produces an error in returning that TPU to
+online mode. A helper script to manage the instance state was written. It
+attempts to destroy the instance three times, with a 15~\textrm{s} delay between
+attempts. With this modification, all resources were successfully returned to
+online mode without issues.
 
 \subsection{Other workflows}
 \label{sec:evgen}
-Data taken by ATLAS is cached at point 1 and transferred to the CERN data
-centre. Tests performed at the end of
-2018 have shown that we must assume the network between point 1 and CERN to be
-busy transferring data from the cache to storage in the CERN data centre
-during technical stops. Offline operation must not interfere with the process.
-That means workflows requiring little data transfer across the network, such as
-simulation, are a natural fit for Sim@P1.
+Data taken by ATLAS is cached at P1 and transferred to the CERN data
+centre. Tests performed at the end of 2018 have shown that we must assume the
+network between point 1 and CERN to be busy transferring data from the cache to
+storage in the CERN data centre during technical stops. Offline operation must
+not interfere with the process. That means workflows requiring little data
+transfer across the network, such as simulation, are a natural fit for Sim@P1.
 
 Event generation is a frequent task that requires no input and produces very
 little output. Previous experience with event generation found that depending on
 the software used and the physics signal generated these tasks have a long tail
 in the required memory. We created dedicated high memory and single core queues
 to explore the use of Sim@P1 for event generation. At the end of 2019, the first
-event generation tasks
-were successfully executed on Sim@P1. Since event generation
-in ATLAS are workloads using a single core, the four HTCondor schedulers were
-fully occupied managing event generation reducing the overall usage of Sim@P1.
+event generation tasks were successfully executed on Sim@P1. Since event
+generation in ATLAS is a workload using a single core, the four HTCondor
+schedulers were fully occupied managing event generation reducing the overall
+usage of Sim@P1.
 
 \subsection{Future improvements}
 The infrastructure supporting Sim@P1 could be further improved to reduce the
@@ -323,30 +306,29 @@ work required to maintain and operate the resource.
 
 The success in running event generation in late 2019 shows that this could be
 done in an automated setup. However workloads that greatly exceeding their
-memory
-allocation must be killed by HTCondor to ensure system stability. In addition,
-additional HTCondor schedulers must be commissioned to accommodate the increased
-number of jobs and limit the number of single core jobs allowed in the queue.
+memory allocation must be killed by HTCondor to ensure system stability. In
+addition, additional HTCondor schedulers must be commissioned to accommodate the
+increased number of jobs and limit the number of single core jobs allowed in the
+queue.
 
 The hardware serving as Frontier squids operating at P1 needs to be replaced.
 Supporting greater bandwidth for the CVMFS and Frontier content distribution
 will further improve the rate at which the farm can be switched from online to
-offline mode. New hardware would mean the squid hierarchy described
-in section~\ref{sec:hierarchy} could be removed, improving the stability of
-Sim@P1.
+offline mode. New hardware would mean the squid hierarchy described in
+section~\ref{sec:hierarchy} could be removed, improving the stability of Sim@P1.
 
 As longer term project, OpenStack Heat or Kubernetes could be used to build
 and auto-scaling pool of HTCondor schedulers. Adding volatile storage to
 serve as a cache inside P1 may allow more data hungry workflows to be executed
-without interfering with online operations\footnote{Such as Xcache of a volatile
-Disk Pool Manager}.
+without interfering with online operations\footnote{Such as Xcache or a volatile
+Disk Pool Manager.}.
 
 \section{Conclusions}
 The TDAQ HLT of the ATLAS experiment at the LHC was upgraded at the beginning of
 2019. The infrastructure for the opportunistic usage of this large computing
-resources, Sim@P1, was swiftly and successfully configured to function on the
-updated HLT hardware. This new configuration is simpler and more robust, because
-it relies on low level Linux tools and libraries and systems maintained by the
+resource, Sim@P1, was swiftly and successfully configured to function on the
+updated HLT hardware. This new configuration is simpler and more robust: it
+relies on low level Linux tools and systems maintained by the
 TDAQ administrators. The system has become much more responsive by adding
 persistent CVMFS caches. Future improvements promise to make Sim@P1 more robust,
 versatile and easy to manage.
@@ -395,7 +377,8 @@ versatile and easy to manage.
   \bibitem{condor}
     D. Thain, T. Tannenbaum and M. Livny,
     % Distributed computing in practice: the Condor experience,
-    Concurrency and Computation: Practice and Experience \textbf{17} 323-356 (2005)
+    Concurrency and Computation: Practice and Experience \textbf{17} 323-356
+    (2005)
     \doi{10.1002/cpe.938}
 
   \bibitem{harvester}
