@@ -1,7 +1,10 @@
 \documentclass{webofc}
 \usepackage[varg]{txfonts}   % Web of Conferences font
+\usepackage{hyperref}
+\usepackage{lineno}
 %
 \begin{document}
+\linenumbers
 %
 \title{ATLAS Sim@P1 upgrades during long shutdown two}
 %
@@ -41,24 +44,25 @@
   The Simulation at Point1 (Sim@P1) project was built in 2013 to take advantage
   of the ATLAS Trigger and Data Acquisition High Level Trigger (HLT) farm. The
   HLT farm provides around 100,000 cores, which are critical to ATLAS during
-  data taking. When ATLAS is not recording data, this large compute resource is
-  used to generate and process simulation data for the experiment. At the
-  beginning of the second long shutdown of the large hadron collider, the HLT
-  farm including the   Sim@P1 infrastructure was upgraded. Previous papers
-  emphasised the need for “simple, reliable, and efficient tools” and assessed
-  various options to quickly switch between data acquisition operation and
-  offline processing. In this contribution, we describe the new mechanisms put
-  in place for the opportunistic exploitation of the HLT farm for offline
-  processing and give the results from the first months of operation.
+  data taking. When ATLAS is not recording data, such as the long shutdowns of
+  the LHC, this large compute resource is  used to generate and process
+  simulation data for the experiment. At the beginning of the second long
+  shutdown of the large hadron collider, the HLT farm including the Sim@P1
+  infrastructure was upgraded. Previous papers emphasised the need for “simple,
+  reliable, and efficient tools” and assessed various options to quickly switch
+  between data acquisition operation and offline processing. In this
+  contribution, we describe the new mechanisms put in place for the
+  opportunistic exploitation of the HLT farm for offline processing and give the
+  results from the first months of operation.
 }
 %
 \maketitle
 %
 \section{Introduction}
 \label{intro}
-ATLAS is a general purpose experiment located at point one (P1) of CERN's large
-hadron collider (LHC)~\cite{atlas}. ATLAS employs a large computer farm,
-summarised in table~\ref{tab:hlt_hardware}, to facilitate data acquisition and
+ATLAS~\cite{atlas} is a general purpose experiment located at point one (P1) of
+CERN's Large Hadron Collider (LHC). ATLAS employs a large computer farm,
+summarised in Table~\ref{tab:hlt_hardware}, to facilitate data acquisition and
 event selection.
 \begin{table}
 \centering
@@ -132,7 +136,7 @@ computing hardware of the HLT was replaced with new nodes. Some old HLT hardware
 was retained at P1 and is permanently operating in offline mode. The new
 hardware has been used offline during the various technical and machine
 development stops throughout 2018. The current hardware configuration is
-summarised in table~\ref{tab:hlt_hardware}. Groups of 32 or 40 servers are
+summarised in Table~\ref{tab:hlt_hardware}. Groups of 32 or 40 servers are
 organised into racks in the data centre at P1.
 
 When a rack is not needed for data taking a shifter can set that rack to
@@ -141,7 +145,7 @@ used by the TDAQ. The next time the configuration management system runs on any
 server, or trigger processing unit (TPU), in that rack\footnote{The
 configuration management tool, Puppet, runs once an hour on the TPUs.} it
 changes the system configuration to reflect the change in the configuration
-database. An ephemeral disk providing 20~\textrm{GB} per core is
+database. An ephemeral disk providing 20\,\textrm{GB} per core is
 created and a virtual machine instance is started\footnote{The size of the
 ephemeral disk is reduced to ensure at least 20\% of the hard drive is free.}.
 This document will refer to such a running virtual machine as an
@@ -172,7 +176,7 @@ isolate traffic on a VLAN. Network security is improved by using a virtual
 router\footnote{With a separate IP table.} that manages only traffic in that
 VLAN. This avoids traffic being forwarded to an unintended host by accident.
 Furthermore, the online traffic is given a higher quality of service guarantee
-than traffic on the Sim@P1 VLAN. That means, offline activities can potentially
+than traffic on the Sim@P1 VLAN. That means offline activities can potentially
 receive the full bandwidth available on the network, but will never impact
 traffic from other TDAQ activities - such as data taking.
 
@@ -219,7 +223,7 @@ minimal and an ATLAS software release once downloaded does not change. So
 keeping the CVMFS cache throughout online operation reduces the
 amount of content the caches need to provide when transitioning to offline mode.
 
-A $50$~\textrm{GB} virtual disk image was created on each TPU to serve as
+A $50$\,\textrm{GB} virtual disk image was created on each TPU to serve as
 persistent CVMFS cache. The ephemeral disk may be smaller to
 compensate for the size of the cache. Libvirt is configured to mount the cache
 as an additional drive. The contextualisation checks for a second drive. If it
@@ -262,7 +266,7 @@ micro-kernel to delay the boot process until at least one proxy cache is up.
 The new configuration of Sim@P1 was operational within two days of the upgrade
 to the TDAQ HLT. This quick transition is a testament to the simplification of
 the Sim@P1 infrastructure under the new configuration. A feature of libvirt
-which negativy effects returning the resources to online operation was
+which negatively effects returning the resources to online operation was
 discovered. The following section described the workaround that was implemented.
 The squid hierarchy provided a marginal improvement in the transition from
 online to offline operation while reducing the overall stability of the system:
@@ -272,12 +276,12 @@ we started loosing racks when the two squids in the rack cease functioning.
 \label{sec:return}
 Returning the resource to online mode quickly and reliably is absolutely
 essential, more so when ATLAS is taking data. Should an instance running on a
-TPU be busy with IO intensive work, it may take time O(10~\textrm{s}) for
+TPU be busy with IO intensive work, it may take time O(10\,\textrm{s}) for
 libvirt to destroy the instance\footnote{Usually an active application using
-swap space.}. Libvirt has a timeout of 15~\textrm{s} waiting on the destruction
+swap space.}. Libvirt has a timeout of 15\,\textrm{s} waiting on the destruction
 of a virtual machine, taking longer produces an error in returning that TPU to
 online mode. A helper script to manage the instance state was written. It
-attempts to destroy the instance three times, with a 15~\textrm{s} delay between
+attempts to destroy the instance three times, with a 15\,\textrm{s} delay between
 attempts. With this modification, all resources were successfully returned to
 online mode without issues.
 
@@ -339,6 +343,7 @@ versatile and easy to manage.
    The ATLAS Collaboration,
    %The  ATLAS  Experiment  at  the  CERN  Large  Hadron  Collider,
    JINST \textbf{3}, S08003 (2008)
+   \url{https://doi.org/10.1088/1748-0221/3/08/S08003}
    \doi{10.1088/1748-0221/3/08/S08003}
 
   \bibitem{tdaq2013}
@@ -349,6 +354,7 @@ versatile and easy to manage.
   \bibitem{Ballestrero:2015ypa}
     S.~Ballestrero \textit{et al},
     J.\ Phys.\ Conf.\ Ser.\  \textbf{664}, 2 022008 (2015)
+    \url{https://doi.org/10.1088/1742-6596/664/2/022008}
     \doi{10.1088/1742-6596/664/2/022008}
 
   \bibitem{openstack}
@@ -359,11 +365,13 @@ versatile and easy to manage.
     S.~Ballestrero \textit{et al},
     %``Evolution and experience with the ATLAS Simulation at Point1 Project,''
     J.\ Phys.\ Conf.\ Ser.\  \textbf{898},  8 082012 (2017)
+    \url{https://doi.org/10.1088/1742-6596/898/8/082012}
     \doi{10.1088/1742-6596/898/8/082012}
 
   \bibitem{Berghaus:2019wuj}
     F.~Berghaus \textit{et al} [ATLAS Collaboration],
     EPJ Web Conf.\ \textbf{214}, 07021 (2019)
+    \url{https://doi.org/10.1051/epjconf/201921407021}
     \doi{10.1051/epjconf/201921407021}
 
   \bibitem{amiconfig}
@@ -379,12 +387,14 @@ versatile and easy to manage.
     % Distributed computing in practice: the Condor experience,
     Concurrency and Computation: Practice and Experience \textbf{17} 323-356
     (2005)
+    \url{https://doi.org/10.1002/cpe.938}
     \doi{10.1002/cpe.938}
 
   \bibitem{harvester}
     T. Maeno \textit{et al} [ATLAS Collaboration],
     % Harvester : an edge service harvesting heterogeneous resources for ATLAS
     EPJ Web of Conf.\ \textbf{214}, 03030 (2019)
+    \url{https://doi.org/10.1051/epjconf/201921403030}
     \doi{10.1051/epjconf/201921403030}
 
   \bibitem{Dykstra:2019}
@@ -396,6 +406,7 @@ versatile and easy to manage.
     J. Blomer \textit{et al},
     %Micro-CernVM: slashing the cost of building and deploying virtual machines,
     J.\ Phys.: Conf.\ Ser.\ \textbf{513} 032009 (2014)
+    \url{https://doi.org/10.1088/1742-6596/513/3/032009}
     \doi{10.1088/1742-6596/513/3/032009}
 
 \end{thebibliography}
