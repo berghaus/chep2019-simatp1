@@ -1,6 +1,7 @@
 \documentclass{webofc}
 \usepackage[varg]{txfonts}   % Web of Conferences font
 \usepackage{hyperref}
+\usepackage{booktabs}
 %
 \begin{document}
 %
@@ -8,21 +9,19 @@
 %
 \author{\firstname{Frank}
         \lastname{Berghaus}\inst{1}\fnsep\thanks{\email{berghaus@cern.ch}} \and
-        \firstname{Franco} \lastname{Brasolin}\inst{2}\fnsep \and
-        \firstname{Alessandro} \lastname{Di Girolamo}\inst{3}\fnsep \and
-        \firstname{Marcus} \lastname{Ebert}\inst{1}\fnsep \and
-        \firstname{Colin Roy} \lastname{Leavett-Brown}\inst{1}\fnsep \and
-        \firstname{Chris} \lastname{Lee}\inst{4}\fnsep \and
-        \firstname{Peter} \lastname{Love}\inst{5}\fnsep \and
-        \firstname{Eukeni} \lastname{Pozo Astigarraga}\inst{3}\fnsep \and
-        \firstname{Diana  Alessandra} \lastname{Scannicchio}\inst{6}\fnsep \and
-        \firstname{Jaroslava} \lastname{Schovancova}\inst{3}\fnsep \and
-        \firstname{Rolf} \lastname{Seuster}\inst{1}\fnsep \and
+        \firstname{Franco} \lastname{Brasolin}\inst{2}\fnsep\and
+        \firstname{Alessandro} \lastname{Di Girolamo}\inst{3}\fnsep\and
+        \firstname{Marcus} \lastname{Ebert}\inst{1}\fnsep\and
+        \firstname{Colin Roy} \lastname{Leavett-Brown}\inst{1}\fnsep\and
+        \firstname{Chris} \lastname{Lee}\inst{4}\fnsep\and
+        \firstname{Peter} \lastname{Love}\inst{5}\fnsep\and
+        \firstname{Eukeni} \lastname{Pozo Astigarraga}\inst{3}\fnsep\and
+        \firstname{Diana  Alessandra} \lastname{Scannicchio}\inst{6}\fnsep\and
+        \firstname{Jaroslava} \lastname{Schovancova}\inst{3}\fnsep\and
+        \firstname{Rolf} \lastname{Seuster}\inst{1}\fnsep\and
         \firstname{Randall}
-        \lastname{Sobie}\inst{1}\fnsep\thanks{\email{sobie@uvic.ca}}
-        \lastname{, on behalf of the ATLAS Collaboration}\thanks{Copyright
-        2020 CERN for the benefit of the ATLAS Collaboration CC-BY-4.0
-        licence.}
+        \lastname{Sobie}\inst{1}\fnsep\thanks{Copyright 2020 CERN for the
+        benefit of the ATLAS Collaboration CC-BY-4.0 licence.}
 }
 %
 \institute{University of Victoria, Victoria, Canada
@@ -56,8 +55,7 @@
 %
 \maketitle
 %
-\section{Introduction}
-\label{intro}
+\section{Introduction}\label{intro}
 ATLAS~\cite{atlas} is a general purpose experiment located at point one (P1) of
 CERN's Large Hadron Collider (LHC). ATLAS employs a large computer farm,
 summarised in Table~\ref{tab:hlt_hardware}, to facilitate data acquisition and
@@ -65,24 +63,24 @@ event selection.
 \begin{table}
 \centering
 \caption{The hardware at P1 currently available for use with Sim@P1. The C6100
-nodes are the decommissioned old HLT. They provide 11008 hyper-threaded (HT)
-cores permanently running in offline mode. Not all cores are used to ensure the
-virtual machines provide sufficient memory for ATLAS offline workloads. The
-other hardware is switched to offline mode when data taking is not foreseen in
-the next 24 hours. These opportunistic resources provide up to 97216 additional
-cores. Usually the trigger and data acquisition team retains some resources for
-their needs.}
-\label{tab:hlt_hardware}
+        nodes are the decommissioned old HLT\@. They provide 11008
+        hyper-threaded (HT) cores permanently running in offline mode. Not all
+        cores are used to ensure the virtual machines provide sufficient memory
+        for ATLAS offline workloads. The other hardware is switched to offline
+        mode when data taking is not foreseen in the next 24 hours. These
+        opportunistic resources provide up to 97216 additional cores. Usually
+        the trigger and data acquisition team retains some resources for their
+        needs.}\label{tab:hlt_hardware}
 \begin{tabular}{llcccc}
-\hline
+\toprule
 Product name &
 Intel\textsuperscript{\textregistered} Xeon\textsuperscript{\textregistered} &
-HT cores & Memory [GB] & Instance cores & Nodes \\\hline
+HT cores & Memory [GB] & Instance cores & Nodes \\\midrule
 C6100 & X5650 & 24 & 24 & 16 & 688\\
-Centerprise & E5-2650 v4 & 48 & 64 & 48 & 360 \\
-Persy & E5-2660 v4 & 56 & 64 & 56 & 440 \\
-MegWare & E5-2680 v3 & 48 & 64 & 48 & 680 \\
-QuantaPlex & E5-2680 v3 & 48 & 64 & 48 & 472\\\hline
+Centerprise & E5--2650 v4 & 48 & 64 & 48 & 360 \\
+Persy & E5--2660 v4 & 56 & 64 & 56 & 440 \\
+MegWare & E5--2680 v3 & 48 & 64 & 48 & 680 \\
+QuantaPlex & E5--2680 v3 & 48 & 64 & 48 & 472\\\bottomrule
 \end{tabular}
 \end{table}
 The HLT is a mission critical part of the ATLAS experiment and is physically
@@ -127,8 +125,7 @@ publication offered multiple options for this upgrade~\cite{Berghaus:2019wuj}.
 In this paper, we describe how the system was modified for operation with the
 upgraded HLT hardware.
 
-\section{The Sim@P1 infrastructure}
-\label{sec:infra}
+\section{The Sim@P1 infrastructure}\label{sec:infra}
 During the year end technical stop from December 2017 to March 2018, the
 computing hardware of the HLT was replaced with new nodes. Some old HLT hardware
 was retained at P1 and is permanently operating in offline mode. The new
@@ -139,8 +136,8 @@ organised into racks in the data centre at P1.
 
 When a rack is not needed for data taking a shifter can set that rack to
 offline operation. This action triggers a change in the configuration database
-used by the TDAQ. The next time the configuration management system runs on any
-server, or trigger processing unit (TPU), in that rack\footnote{The
+used by the TDAQ\@. The next time the configuration management system runs on
+any server, or trigger processing unit (TPU), in that rack\footnote{The
 configuration management tool, Puppet, runs once an hour on the TPUs.} it
 changes the system configuration to reflect the change in the configuration
 database. An ephemeral disk providing 20\,\textrm{GB} per core is
@@ -150,7 +147,7 @@ This document will refer to such a running virtual machine as an
 \textit{instance}.
 
 Instances are contextualised using amiconfig\footnote{Originally a
-project by rPath, Inc. now maintained by the CernVM team.}~\cite{amiconfig}.
+project by rPath, Inc\. now maintained by the CernVM team.}~\cite{amiconfig}.
 The contextualisation is delivered using an ISO image added to the instance
 by libvirt~\cite{libvirt}. The ISO image is formatted as an OpenNebula data
 source. The contextualisation sets up the computing environment for the ATLAS
@@ -170,13 +167,13 @@ of workers.  The HTCondor system now directly notifies the PanDA workload
 management system when resources are added or removed from Sim@P1.
 
 The new Sim@P1 network configuration still uses tags in the Ethernet frames to
-isolate traffic on a VLAN. Network security is improved by using a virtual
+isolate traffic on a VLAN\@. Network security is improved by using a virtual
 router\footnote{With a separate IP table.} that manages only traffic in that
-VLAN. This avoids traffic being forwarded to an unintended host by accident.
+VLAN\@. This avoids traffic being forwarded to an unintended host by accident.
 Furthermore, the online traffic is given a higher quality of service guarantee
-than traffic on the Sim@P1 VLAN. That means offline activities can potentially
+than traffic on the Sim@P1 VLAN\@. That means offline activities can potentially
 receive the full bandwidth available on the network, but will never impact
-traffic from other TDAQ activities - such as data taking.
+traffic from other TDAQ activities --- such as data taking.
 
 \subsection{Content delivery}
 CernVM is a good solution for Sim@P1 because the micro-image can be distributed
@@ -192,29 +189,26 @@ the contextualisation, the Frontier squid at P1 was saturating its network
 bandwidth to deliver the content required by the booting instances.
 \begin{figure}[h]
 \centering
-\sidecaption
-\includegraphics[width=0.6\textwidth,clip]{single_squid}
+\sidecaption\includegraphics[width=0.6\textwidth,clip]{single_squid}
 \caption{The top figure shows the number of instances, CPUs, and running
-processes as well as the aggregate one minute load on the TDAQ HLT farm as it
-transitions to offline mode. Below, using the same timestamps, the network load
-on the single Frontier proxy delivering the CVMFS content to all the nodes is
-displayed. The correlation of saturated outgoing bandwidth in the lower plot
-with
-the steady increase in the load and processes in the upper plot suggests the
-squid is the rate determining system in the transition of the farm.}
-\label{fig:single_proxy}
+        processes as well as the aggregate one minute load on the TDAQ HLT farm
+        as it transitions to offline mode. Below, using the same timestamps,
+        the network load on the single Frontier proxy delivering the CVMFS
+        content to all the nodes is displayed. The correlation of saturated
+        outgoing bandwidth in the lower plot with the steady increase in the
+        load and processes in the upper plot suggests the squid is the rate
+        determining system in the transition of the farm.}\label{fig:single_proxy}
 \end{figure}
 To address the bottleneck posed by the single squid we added a second squid
 instance, then added CVMFS caches that persist throughout HLT operation, and
 finally created a hierarchy of squids on the instances in offline mode.
 
 The addition of a second squid doubled the total bandwidth used to deliver the
-content required for CVMFS. As a result the transition to offline mode finished
+content required for CVMFS\@. As a result the transition to offline mode finished
 in three hours: approximately twice as fast as with the single Frontier squid.
 
 
-\subsection{Persistent CVMFS caches}
-\label{sec:cvmfs}
+\subsection{Persistent CVMFS caches}\label{sec:cvmfs}
 Much of the CVMFS content remains unchanged between successive switches between
 offline and online mode: changes to the files in the CernVM system tend to be
 minimal and an ATLAS software release once downloaded does not change. So
@@ -234,20 +228,18 @@ boots in an hour, with a slight time delay between the virtual machine being
 created and being fully occupied with work.
 \begin{figure}[h]
 \centering
-\sidecaption
-\includegraphics[width=0.6\textwidth,clip]{persistent_cache}
-\caption{The top figure shows the number of instances, CPUs, and running
-processes as well as the aggregate one minute load on the TDAQ HLT farm as it
-transitions to offline mode. Below, using the same timestamps, the network load
-on the two Frontier squids delivering the CVMFS content to all the nodes is
-displayed. With the persistent cache the network traffic on the squids
-is greatly reduced.}
-\label{fig:persistent_cache}
+\sidecaption\includegraphics[width=0.6\textwidth,clip]{persistent_cache}
+\caption{The top figure shows the number of
+        instances, CPUs, and running processes as well as the aggregate one
+        minute load on the TDAQ HLT farm as it transitions to offline mode.
+        Below, using the same timestamps, the network load on the two Frontier
+        squids delivering the CVMFS content to all the nodes is displayed. With
+        the persistent cache the network traffic on the squids is greatly
+        reduced.}\label{fig:persistent_cache}
 \end{figure}
 
 
-\subsection{Squid hierarchy}
-\label{sec:hierarchy}
+\subsection{Squid hierarchy}\label{sec:hierarchy}
 The contextualisation of the instances was adjusted to run a squid in two
 instances in each rack, as a complimentary approach to the persistent CVMFS
 caches\footnote{The first and fifth TPU to ensure the squids are in
@@ -259,10 +251,9 @@ squids in the same rack. The CernVM team added functionality to the CernVM
 micro-kernel to delay the boot process until at least one proxy cache is up.
 
 
-\section{Operational experience}
-\label{sec:ops}
+\section{Operational experience}\label{sec:ops}
 The new configuration of Sim@P1 was operational within two days of the upgrade
-to the TDAQ HLT. This quick transition is a testament to the simplification of
+to the TDAQ HLT\@. This quick transition is a testament to the simplification of
 the Sim@P1 infrastructure under the new configuration. A feature of libvirt
 which negatively effects returning the resources to online operation was
 discovered. The following section described the workaround that was implemented.
@@ -270,11 +261,10 @@ The squid hierarchy provided a marginal improvement in the transition from
 online to offline operation while reducing the overall stability of the system:
 we started loosing racks when the two squids in the rack cease functioning.
 
-\subsection{Returning the resources}
-\label{sec:return}
+\subsection{Returning the resources}\label{sec:return}
 Returning the resource to online mode quickly and reliably is absolutely
 essential, more so when ATLAS is taking data. Should an instance running on a
-TPU be busy with IO intensive work, it may take time O(10\,\textrm{s}) for
+TPU be busy with IO intensive work, it may take time $O(10\,\mathrm{s})$ for
 libvirt to destroy the instance\footnote{Usually an active application using
 swap space.}. Libvirt has a timeout of 15\,\textrm{s} waiting on the destruction
 of a virtual machine, taking longer produces an error in returning that TPU to
@@ -283,8 +273,7 @@ attempts to destroy the instance three times, with a 15\,\textrm{s} delay betwee
 attempts. With this modification, all resources were successfully returned to
 online mode without issues.
 
-\subsection{Other workflows}
-\label{sec:evgen}
+\subsection{Other workflows}\label{sec:evgen}
 Data taken by ATLAS is cached at P1 and transferred to the CERN data
 centre. Tests performed at the end of 2018 have shown that we must assume the
 network between point 1 and CERN to be busy transferring data from the cache to
@@ -317,7 +306,7 @@ The hardware serving as Frontier squids operating at P1 needs to be replaced.
 Supporting greater bandwidth for the CVMFS and Frontier content distribution
 will further improve the rate at which the farm can be switched from online to
 offline mode. New hardware would mean the squid hierarchy described in
-section~\ref{sec:hierarchy} could be removed, improving the stability of Sim@P1.
+Section~\ref{sec:hierarchy} could be removed, improving the stability of Sim@P1.
 
 As longer term project, OpenStack Heat or Kubernetes could be used to build
 and auto-scaling pool of HTCondor schedulers. Adding volatile storage to
@@ -341,30 +330,30 @@ versatile and easy to manage.
    The ATLAS Collaboration,
    %The  ATLAS  Experiment  at  the  CERN  Large  Hadron  Collider,
    JINST \textbf{3}, S08003 (2008)
-   \url{https://doi.org/10.1088/1748-0221/3/08/S08003}
-   \doi{10.1088/1748-0221/3/08/S08003}
+   \url{https://doi.org/10.1088/1748-0221/3/08/S08003} % chktex 8
+   \doi{10.1088/1748-0221/3/08/S08003} % chktex 8
 
   \bibitem{tdaq2013}
     The ATLAS Collaboration, \textit{Technical Design Report for the Phase-I
-    Upgrade of the ATLAS TDAQ System} (CERN, Geneva, 2013) 120-122
+    Upgrade of the ATLAS TDAQ System} (CERN, Geneva, 2013) 120--122
     \url{https://cds.cern.ch/record/1602235}
 
   \bibitem{Ballestrero:2015ypa}
     S.~Ballestrero \textit{et al},
     J.\ Phys.\ Conf.\ Ser.\  \textbf{664}, 2 022008 (2015)
-    \url{https://doi.org/10.1088/1742-6596/664/2/022008}
-    \doi{10.1088/1742-6596/664/2/022008}
+    \url{https://doi.org/10.1088/1742-6596/664/2/022008} % chktex 8
+    \doi{10.1088/1742-6596/664/2/022008} % chktex 8
 
   \bibitem{openstack}
     Openstack project, ”OpenStack” [software], version Icehouse, available from
-    \url{https://www.openstack.org/software/icehouse/} [accessed 2018-09-24]
+    \url{https://www.openstack.org/software/icehouse/} [accessed 2018-09-24] % chktex 8
 
   \bibitem{Ballestrero:2017psv}
     S.~Ballestrero \textit{et al},
     %``Evolution and experience with the ATLAS Simulation at Point1 Project,''
     J.\ Phys.\ Conf.\ Ser.\  \textbf{898},  8 082012 (2017)
-    \url{https://doi.org/10.1088/1742-6596/898/8/082012}
-    \doi{10.1088/1742-6596/898/8/082012}
+    \url{https://doi.org/10.1088/1742-6596/898/8/082012} % chktex 8
+    \doi{10.1088/1742-6596/898/8/082012} % chktex 8
 
   \bibitem{Berghaus:2019wuj}
     F.~Berghaus \textit{et al} [ATLAS Collaboration],
@@ -374,16 +363,16 @@ versatile and easy to manage.
 
   \bibitem{amiconfig}
     CernVM project, ``amiconfig'' [software], available from
-    \url{https://github.com/cernvm/amiconfig} [accessed 2018-10-10]
+    \url{https://github.com/cernvm/amiconfig} [accessed 2018-10-10] % chktex 8
 
   \bibitem{libvirt}
     libvirt project, ``libvirt virtualization API'' [software], version 0.10.2,
-    available from \url{https://libvirt.org} [accessed 2018-10-10]
+    available from \url{https://libvirt.org} [accessed 2018-10-10] % chktex 8
 
   \bibitem{condor}
     D. Thain, T. Tannenbaum and M. Livny,
     % Distributed computing in practice: the Condor experience,
-    Concurrency and Computation: Practice and Experience \textbf{17} 323-356
+    Concurrency and Computation: Practice and Experience \textbf{17} 323--356
     (2005)
     \url{https://doi.org/10.1002/cpe.938}
     \doi{10.1002/cpe.938}
@@ -398,14 +387,14 @@ versatile and easy to manage.
   \bibitem{Dykstra:2019}
     Frontier project, ``Frontier squid'' [software], available from
     \url{https://twiki.cern.ch/twiki/bin/view/Frontier/InstallSquid}
-    [accessed 2020-01-17]
+    [accessed 2020-01-17] % chktex 8
 
   \bibitem{cernvm}
     J. Blomer \textit{et al},
     %Micro-CernVM: slashing the cost of building and deploying virtual machines,
     J.\ Phys.: Conf.\ Ser.\ \textbf{513} 032009 (2014)
-    \url{https://doi.org/10.1088/1742-6596/513/3/032009}
-    \doi{10.1088/1742-6596/513/3/032009}
+    \url{https://doi.org/10.1088/1742-6596/513/3/032009} % chktex 8
+    \doi{10.1088/1742-6596/513/3/032009} % chktex 8
 
 \end{thebibliography}
 
